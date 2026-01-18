@@ -107,6 +107,14 @@ pub fn parse_private_key(
                 openssl::pkey::Id::ED448,
             )?)
         }
+        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        AlgorithmParameters::Mldsa44 => {
+            let key_bytes = asn1::parse_single(k.private_key)?;
+            Ok(openssl::pkey::PKey::private_key_from_raw_bytes_ex(
+                key_bytes,
+                "ML-DSA-44",
+            )?)
+        }
 
         _ => Err(KeyParsingError::UnsupportedKeyType(
             k.algorithm.oid().clone(),
@@ -441,6 +449,24 @@ pub fn serialize_private_key(
             (params, private_key_der)
         }
         _ => {
+            // If pkey type is implemented in a provider in OpenSSL, EVP_KEY_id() will return -1
+            // meaning that the type is not really registered. Use different method to detect ML-DSA
+            #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+            {
+                if pkey
+                    .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa44)
+                    .ok()
+                    .flatten()
+                    .is_some()
+                {
+                    let raw_bytes = pkey.raw_private_key()?;
+                    let private_key_der = asn1::write_single(&raw_bytes.as_slice())?;
+                    (AlgorithmParameters::Mldsa44, private_key_der)
+                } else {
+                    unimplemented!("Unknown key type");
+                }
+            }
+            #[cfg(not(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER))]
             unimplemented!("Unknown key type");
         }
     };
