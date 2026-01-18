@@ -33,6 +33,7 @@ private key is able to decrypt it.
     mlkem512
     mlkem768
     mlkem1024
+    hybrid_kem
     ec
     rsa
     dh
