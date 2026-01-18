@@ -16,6 +16,9 @@ from cryptography.hazmat.primitives.asymmetric import (
     mldsa44,
     mldsa65,
     mldsa87,
+    mlkem512,
+    mlkem768,
+    mlkem1024,
     rsa,
     x448,
     x25519,
@@ -34,6 +37,9 @@ PublicKeyTypes = typing.Union[
     mldsa44.MlDsa44PublicKey,
     mldsa65.MlDsa65PublicKey,
     mldsa87.MlDsa87PublicKey,
+    mlkem512.MlKem512PublicKey,
+    mlkem768.MlKem768PublicKey,
+    mlkem1024.MlKem1024PublicKey,
 ]
 PUBLIC_KEY_TYPES = PublicKeyTypes
 utils.deprecated(
@@ -56,6 +62,9 @@ PrivateKeyTypes = typing.Union[
     mldsa44.MlDsa44PrivateKey,
     mldsa65.MlDsa65PrivateKey,
     mldsa87.MlDsa87PrivateKey,
+    mlkem512.MlKem512PrivateKey,
+    mlkem768.MlKem768PrivateKey,
+    mlkem1024.MlKem1024PrivateKey,
 ]
 PRIVATE_KEY_TYPES = PrivateKeyTypes
 utils.deprecated(

@@ -187,6 +187,9 @@ class PublicKeyAlgorithmOID:
     ED448 = ObjectIdentifier("1.3.101.113")
     ML_DSA_44 = ObjectIdentifier("2.16.840.1.101.3.4.3.17")
     ML_DSA_65 = ObjectIdentifier("2.16.840.1.101.3.4.3.18")
+    ML_KEM_512 = ObjectIdentifier("2.16.840.1.101.3.4.4.1")
+    ML_KEM_768 = ObjectIdentifier("2.16.840.1.101.3.4.4.2")
+    ML_KEM_1024 = ObjectIdentifier("2.16.840.1.101.3.4.4.3")
 
 
 class ExtendedKeyUsageOID:
@@ -311,6 +314,9 @@ _OID_NAMES = {
     PublicKeyAlgorithmOID.RSAES_PKCS1_v1_5: "rsaEncryption",
     PublicKeyAlgorithmOID.X25519: "X25519",
     PublicKeyAlgorithmOID.X448: "X448",
+    PublicKeyAlgorithmOID.ML_KEM_512: "ml-kem-512",
+    PublicKeyAlgorithmOID.ML_KEM_768: "ml-kem-768",
+    PublicKeyAlgorithmOID.ML_KEM_1024: "ml-kem-1024",
     ExtendedKeyUsageOID.SERVER_AUTH: "serverAuth",
     ExtendedKeyUsageOID.CLIENT_AUTH: "clientAuth",
     ExtendedKeyUsageOID.CODE_SIGNING: "codeSigning",
