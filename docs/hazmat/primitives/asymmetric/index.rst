@@ -30,6 +30,7 @@ private key is able to decrypt it.
     mldsa44
     mldsa65
     mldsa87
+    mlkem512
     ec
     rsa
     dh
@@ -64,7 +65,8 @@ union type aliases can be used instead to reference a multitude of key types.
     :class:`~cryptography.hazmat.primitives.asymmetric.x448.X448PublicKey`,
     :class:`~cryptography.hazmat.primitives.asymmetric.mldsa44.MlDsa44PublicKey`,
     :class:`~cryptography.hazmat.primitives.asymmetric.mldsa65.MlDsa65PublicKey`,
-    :class:`~cryptography.hazmat.primitives.asymmetric.mldsa87.MlDsa87PublicKey`.
+    :class:`~cryptography.hazmat.primitives.asymmetric.mldsa87.MlDsa87PublicKey`,
+    :class:`~cryptography.hazmat.primitives.asymmetric.mlkem512.MlKem512PublicKey`.
 
 .. data:: PrivateKeyTypes
 
@@ -81,7 +83,8 @@ union type aliases can be used instead to reference a multitude of key types.
     :class:`~cryptography.hazmat.primitives.asymmetric.x448.X448PrivateKey`,
     :class:`~cryptography.hazmat.primitives.asymmetric.mldsa44.MlDsa44PrivateKey`,
     :class:`~cryptography.hazmat.primitives.asymmetric.mldsa65.MlDsa65PrivateKey`,
-    :class:`~cryptography.hazmat.primitives.asymmetric.mldsa87.MlDsa87PrivateKey`.
+    :class:`~cryptography.hazmat.primitives.asymmetric.mldsa87.MlDsa87PrivateKey`,
+    :class:`~cryptography.hazmat.primitives.asymmetric.mlkem512.MlKem512PrivateKey`.
 
 .. data:: CertificatePublicKeyTypes
 

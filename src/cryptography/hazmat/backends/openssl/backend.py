@@ -305,4 +305,7 @@ class Backend:
     def mldsa87_supported(self) -> bool:
         return rust_openssl.CRYPTOGRAPHY_OPENSSL_350_OR_GREATER
 
+    def mlkem512_supported(self) -> bool:
+        return rust_openssl.CRYPTOGRAPHY_OPENSSL_350_OR_GREATER
+
 backend = Backend()

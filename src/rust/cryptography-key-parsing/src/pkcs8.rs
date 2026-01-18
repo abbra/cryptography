@@ -132,6 +132,15 @@ pub fn parse_private_key(
             )?)
         }
 
+        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        AlgorithmParameters::Mlkem512 => {
+            let key_bytes = asn1::parse_single(k.private_key)?;
+            Ok(openssl::pkey::PKey::private_key_from_raw_bytes_ex(
+                key_bytes,
+                "ML-KEM-512",
+            )?)
+        }
+
         _ => Err(KeyParsingError::UnsupportedKeyType(
             k.algorithm.oid().clone(),
         )),
@@ -467,6 +476,7 @@ pub fn serialize_private_key(
         _ => {
             // If pkey type is implemented in a provider in OpenSSL, EVP_KEY_id() will return -1
             // meaning that the type is not really registered. Use different method to detect ML-DSA
+            // and ML-KEM
             #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
             {
                 if pkey
@@ -496,6 +506,15 @@ pub fn serialize_private_key(
                     let raw_bytes = pkey.raw_private_key()?;
                     let private_key_der = asn1::write_single(&raw_bytes.as_slice())?;
                     (AlgorithmParameters::Mldsa87, private_key_der)
+                } else if pkey
+                    .ml_kem(openssl::pkey_ml_kem::Variant::MlKem512)
+                    .ok()
+                    .flatten()
+                    .is_some()
+                {
+                    let raw_bytes = pkey.raw_private_key()?;
+                    let private_key_der = asn1::write_single(&raw_bytes.as_slice())?;
+                    (AlgorithmParameters::Mlkem512, private_key_der)
                 } else {
                     unimplemented!("Unknown key type");
                 }
