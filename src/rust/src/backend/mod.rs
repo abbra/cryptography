@@ -22,6 +22,8 @@ pub(crate) mod kdf;
 pub(crate) mod keys;
 #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
 pub(crate) mod mldsa44;
+#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+pub(crate) mod mldsa65;
 pub(crate) mod poly1305;
 pub(crate) mod rand;
 pub(crate) mod rsa;
