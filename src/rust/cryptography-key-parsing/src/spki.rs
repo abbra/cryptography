@@ -277,6 +277,13 @@ pub fn serialize_public_key(
                     .is_some()
                 {
                     (AlgorithmParameters::Mlkem512, pkey.raw_public_key()?)
+                } else if pkey
+                    .ml_kem(openssl::pkey_ml_kem::Variant::MlKem768)
+                    .ok()
+                    .flatten()
+                    .is_some()
+                {
+                    (AlgorithmParameters::Mlkem768, pkey.raw_public_key()?)
                 } else {
                     unimplemented!("Unknown key type");
                 }

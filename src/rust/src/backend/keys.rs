@@ -148,6 +148,13 @@ fn private_key_from_pkey<'p>(
             return Ok(crate::backend::mlkem512::private_key_from_pkey(pkey)
                 .into_pyobject(py)?
                 .into_any());
+        } else if pkey
+            .ml_kem(openssl::pkey_ml_kem::Variant::MlKem768)?
+            .is_some()
+        {
+            return Ok(crate::backend::mlkem768::private_key_from_pkey(pkey)
+                .into_pyobject(py)?
+                .into_any());
         }
     }
     match pkey.id() {
@@ -309,6 +316,13 @@ fn public_key_from_pkey<'p>(
             .is_some()
         {
             return Ok(crate::backend::mlkem512::public_key_from_pkey(pkey)
+                .into_pyobject(py)?
+                .into_any());
+        } else if pkey
+            .ml_kem(openssl::pkey_ml_kem::Variant::MlKem768)?
+            .is_some()
+        {
+            return Ok(crate::backend::mlkem768::public_key_from_pkey(pkey)
                 .into_pyobject(py)?
                 .into_any());
         }
