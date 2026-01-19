@@ -504,6 +504,15 @@ pub static ML_DSA_65_PUBLIC_KEY: LazyPyImport = LazyPyImport::new(
     &["MlDsa65PublicKey"],
 );
 
+pub static ML_DSA_87_PRIVATE_KEY: LazyPyImport = LazyPyImport::new(
+    "cryptography.hazmat.primitives.asymmetric.mldsa87",
+    &["MlDsa87PrivateKey"],
+);
+pub static ML_DSA_87_PUBLIC_KEY: LazyPyImport = LazyPyImport::new(
+    "cryptography.hazmat.primitives.asymmetric.mldsa87",
+    &["MlDsa87PublicKey"],
+);
+
 pub static DSA_PRIVATE_KEY: LazyPyImport = LazyPyImport::new(
     "cryptography.hazmat.primitives.asymmetric.dsa",
     &["DSAPrivateKey"],

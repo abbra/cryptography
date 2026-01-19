@@ -32,6 +32,7 @@ static HASH_OIDS_TO_HASH: LazyLock<HashMap<&asn1::ObjectIdentifier, &str>> = Laz
     h.insert(&oid::SHA3_512_NIST_OID, "SHA3_512");
     h.insert(&oid::ML_DSA_44, "ML_DSA_44");
     h.insert(&oid::ML_DSA_65, "ML_DSA_65");
+    h.insert(&oid::ML_DSA_87, "ML_DSA_87");
     h
 });
 
@@ -44,6 +45,7 @@ pub(crate) enum KeyType {
     Ed448,
     Mldsa44,
     Mldsa65,
+    Mldsa87,
 }
 
 enum HashType {
@@ -76,6 +78,8 @@ pub(crate) fn identify_key_type(
         Ok(KeyType::Mldsa44)
     } else if private_key.is_instance(&types::ML_DSA_65_PRIVATE_KEY.get(py)?)? {
         Ok(KeyType::Mldsa65)
+    } else if private_key.is_instance(&types::ML_DSA_87_PRIVATE_KEY.get(py)?)? {
+        Ok(KeyType::Mldsa87)
     } else {
         Err(pyo3::exceptions::PyTypeError::new_err(
             "Key must be an rsa, dsa, ec, ed25519, ed448, or ml-dsa private key.",
@@ -201,9 +205,19 @@ pub(crate) fn compute_signature_algorithm<'p>(
             oid: asn1::DefinedByMarker::marker(),
             params: common::AlgorithmParameters::Mldsa44,
         }),
-        (KeyType::Mldsa44 | KeyType::Mldsa65, _) => Err(pyo3::exceptions::PyValueError::new_err(
-            "Algorithm must be None when signing via ML-DSA",
-        )),
+        (KeyType::Mldsa65, HashType::None) => Ok(common::AlgorithmIdentifier {
+            oid: asn1::DefinedByMarker::marker(),
+            params: common::AlgorithmParameters::Mldsa65,
+        }),
+        (KeyType::Mldsa87, HashType::None) => Ok(common::AlgorithmIdentifier {
+            oid: asn1::DefinedByMarker::marker(),
+            params: common::AlgorithmParameters::Mldsa87,
+        }),
+        (KeyType::Mldsa44 | KeyType::Mldsa65 | KeyType::Mldsa87, _) => {
+            Err(pyo3::exceptions::PyValueError::new_err(
+                "Algorithm must be None when signing via ML-DSA",
+            ))
+        }
         (KeyType::Ec, HashType::Sha224) => Ok(common::AlgorithmIdentifier {
             oid: asn1::DefinedByMarker::marker(),
             params: common::AlgorithmParameters::EcDsaWithSha224(None),
@@ -309,9 +323,11 @@ pub(crate) fn sign_data<'p>(
     let key_type = identify_key_type(py, private_key.clone())?;
 
     let signature = match key_type {
-        KeyType::Ed25519 | KeyType::Ed448 | KeyType::Mldsa44 | KeyType::Mldsa65 => {
-            private_key.call_method1(pyo3::intern!(py, "sign"), (data,))?
-        }
+        KeyType::Ed25519
+        | KeyType::Ed448
+        | KeyType::Mldsa44
+        | KeyType::Mldsa65
+        | KeyType::Mldsa87 => private_key.call_method1(pyo3::intern!(py, "sign"), (data,))?,
         KeyType::Ec => {
             let ecdsa = types::ECDSA
                 .get(py)?
@@ -352,7 +368,11 @@ pub(crate) fn verify_signature_with_signature_algorithm<'p>(
         identify_signature_algorithm_parameters(py, signature_algorithm)?;
     let py_signature_hash_algorithm = identify_signature_hash_algorithm(py, signature_algorithm)?;
     match key_type {
-        KeyType::Ed25519 | KeyType::Ed448 | KeyType::Mldsa44 | KeyType::Mldsa65 => {
+        KeyType::Ed25519
+        | KeyType::Ed448
+        | KeyType::Mldsa44
+        | KeyType::Mldsa65
+        | KeyType::Mldsa87 => {
             issuer_public_key.call_method1(pyo3::intern!(py, "verify"), (signature, data))?
         }
         KeyType::Ec => issuer_public_key.call_method1(
@@ -394,6 +414,8 @@ pub(crate) fn identify_public_key_type(
         Ok(KeyType::Mldsa44)
     } else if public_key.is_instance(&types::ML_DSA_65_PUBLIC_KEY.get(py)?)? {
         Ok(KeyType::Mldsa65)
+    } else if public_key.is_instance(&types::ML_DSA_87_PUBLIC_KEY.get(py)?)? {
+        Ok(KeyType::Mldsa87)
     } else {
         Err(pyo3::exceptions::PyTypeError::new_err(
             "Key must be an rsa, dsa, ec, ed25519, ed448, ml-dsa-44, or ml-dsa-65 public key.",
@@ -430,6 +452,7 @@ fn identify_key_type_for_algorithm_params(
         | common::AlgorithmParameters::DsaWithSha512(..) => Ok(KeyType::Dsa),
         common::AlgorithmParameters::Mldsa44 => Ok(KeyType::Mldsa44),
         common::AlgorithmParameters::Mldsa65 => Ok(KeyType::Mldsa65),
+        common::AlgorithmParameters::Mldsa87 => Ok(KeyType::Mldsa87),
         _ => Err(pyo3::exceptions::PyValueError::new_err(
             "Unsupported signature algorithm",
         )),

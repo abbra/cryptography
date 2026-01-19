@@ -20,6 +20,7 @@ from cryptography.hazmat.primitives.asymmetric import (
     ec,
     mldsa44,
     mldsa65,
+    mldsa87,
     padding,
     rsa,
 )
@@ -47,6 +48,7 @@ PKCS7PrivateKeyTypes = typing.Union[
     ec.EllipticCurvePrivateKey,
     mldsa44.MlDsa44PrivateKey,
     mldsa65.MlDsa65PrivateKey,
+    mldsa87.MlDsa87PrivateKey,
 ]
 
 ContentEncryptionAlgorithm = typing.Union[
@@ -106,6 +108,7 @@ class PKCS7SignatureBuilder:
                 ec.EllipticCurvePrivateKey,
                 mldsa44.MlDsa44PrivateKey,
                 mldsa65.MlDsa65PrivateKey,
+                mldsa87.MlDsa87PrivateKey,
             ),
         ):
             raise TypeError("Key must be RSA, EC, or ML-DSA")
@@ -116,6 +119,7 @@ class PKCS7SignatureBuilder:
             (
                 mldsa44.MlDsa44PrivateKey,
                 mldsa65.MlDsa65PrivateKey,
+                mldsa87.MlDsa87PrivateKey,
             ),
         ):
             if hash_algorithm is not None:
