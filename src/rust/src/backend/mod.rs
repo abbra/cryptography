@@ -27,6 +27,8 @@ pub(crate) mod mldsa65;
 #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
 pub(crate) mod mldsa87;
 #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+pub(crate) mod mlkem1024;
+#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
 pub(crate) mod mlkem512;
 #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
 pub(crate) mod mlkem768;

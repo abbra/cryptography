@@ -246,6 +246,9 @@ mod _rust {
         use crate::backend::mldsa87::mldsa87;
         #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
         #[pymodule_export]
+        use crate::backend::mlkem1024::mlkem1024;
+        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[pymodule_export]
         use crate::backend::mlkem512::mlkem512;
         #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
         #[pymodule_export]

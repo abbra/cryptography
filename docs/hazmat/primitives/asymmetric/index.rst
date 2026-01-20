@@ -32,6 +32,7 @@ private key is able to decrypt it.
     mldsa87
     mlkem512
     mlkem768
+    mlkem1024
     ec
     rsa
     dh

@@ -150,6 +150,15 @@ pub fn parse_private_key(
             )?)
         }
 
+        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        AlgorithmParameters::Mlkem1024 => {
+            let key_bytes = asn1::parse_single(k.private_key)?;
+            Ok(openssl::pkey::PKey::private_key_from_raw_bytes_ex(
+                key_bytes,
+                "ML-KEM-1024",
+            )?)
+        }
+
         _ => Err(KeyParsingError::UnsupportedKeyType(
             k.algorithm.oid().clone(),
         )),
@@ -533,6 +542,15 @@ pub fn serialize_private_key(
                     let raw_bytes = pkey.raw_private_key()?;
                     let private_key_der = asn1::write_single(&raw_bytes.as_slice())?;
                     (AlgorithmParameters::Mlkem768, private_key_der)
+                } else if pkey
+                    .ml_kem(openssl::pkey_ml_kem::Variant::MlKem1024)
+                    .ok()
+                    .flatten()
+                    .is_some()
+                {
+                    let raw_bytes = pkey.raw_private_key()?;
+                    let private_key_der = asn1::write_single(&raw_bytes.as_slice())?;
+                    (AlgorithmParameters::Mlkem1024, private_key_der)
                 } else {
                     unimplemented!("Unknown key type");
                 }

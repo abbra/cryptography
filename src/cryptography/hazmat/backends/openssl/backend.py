@@ -311,4 +311,8 @@ class Backend:
     def mlkem768_supported(self) -> bool:
         return rust_openssl.CRYPTOGRAPHY_OPENSSL_350_OR_GREATER
 
+    def mlkem1024_supported(self) -> bool:
+        return rust_openssl.CRYPTOGRAPHY_OPENSSL_350_OR_GREATER
+
+
 backend = Backend()
