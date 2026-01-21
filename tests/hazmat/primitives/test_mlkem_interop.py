@@ -9,6 +9,7 @@ can exchange keys with OpenSSL-generated keys.
 """
 
 import subprocess
+import sys
 import tempfile
 
 import pytest
@@ -36,12 +37,11 @@ def _openssl_supports_mlkem():
 
 
 # Skip all tests in this module if OpenSSL doesn't support ML-KEM
-pytestmark = pytest.mark.skipif(
-    not _openssl_supports_mlkem(),
+@pytest.mark.skipif(
+    not _openssl_supports_mlkem()
+    or sys.platform in ["win32", "win-amd64", "win-arm64"],
     reason="OpenSSL does not support ML-KEM",
 )
-
-
 class TestMLKEMOpenSSLInterop:
     """Test ML-KEM interoperability with OpenSSL command-line tools"""
 
