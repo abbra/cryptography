@@ -106,6 +106,12 @@ pub fn parse_public_key(
             "ML-DSA-44",
         )
         .map_err(|_| KeyParsingError::InvalidKey)?),
+        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        AlgorithmParameters::Mldsa65 => Ok(openssl::pkey::PKey::public_key_from_raw_bytes_ex(
+            k.subject_public_key.as_bytes(),
+            "ML-DSA-65",
+        )
+        .map_err(|_| KeyParsingError::InvalidKey)?),
         _ => Err(KeyParsingError::UnsupportedKeyType(
             k.algorithm.oid().clone(),
         )),
@@ -232,6 +238,13 @@ pub fn serialize_public_key(
                     .is_some()
                 {
                     (AlgorithmParameters::Mldsa44, pkey.raw_public_key()?)
+                } else if pkey
+                    .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa65)
+                    .ok()
+                    .flatten()
+                    .is_some()
+                {
+                    (AlgorithmParameters::Mldsa65, pkey.raw_public_key()?)
                 } else {
                     unimplemented!("Unknown key type");
                 }
