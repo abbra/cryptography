@@ -21,7 +21,7 @@ use crate::{ec, pbe, rsa, KeyParsingError, KeyParsingResult};
 //       expandedKey OCTET STRING (SIZE (2560))
 //   }
 // }
-#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+#[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
 #[derive(asn1::Asn1Read, asn1::Asn1Write)]
 enum MlDsa44PrivateKeyValue<'a> {
     #[implicit(0)]
@@ -30,14 +30,14 @@ enum MlDsa44PrivateKeyValue<'a> {
     Both(MlDsa44PrivateKeyBoth<'a>),
 }
 
-#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+#[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
 #[derive(asn1::Asn1Read, asn1::Asn1Write)]
 struct MlDsa44PrivateKeyBoth<'a> {
     seed: &'a [u8],
     expanded_key: &'a [u8],
 }
 
-#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+#[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
 #[derive(asn1::Asn1Read, asn1::Asn1Write)]
 enum MlDsa65PrivateKeyValue<'a> {
     #[implicit(0)]
@@ -46,14 +46,14 @@ enum MlDsa65PrivateKeyValue<'a> {
     Both(MlDsa65PrivateKeyBoth<'a>),
 }
 
-#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+#[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
 #[derive(asn1::Asn1Read, asn1::Asn1Write)]
 struct MlDsa65PrivateKeyBoth<'a> {
     seed: &'a [u8],
     expanded_key: &'a [u8],
 }
 
-#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+#[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
 #[derive(asn1::Asn1Read, asn1::Asn1Write)]
 enum MlDsa87PrivateKeyValue<'a> {
     #[implicit(0)]
@@ -62,7 +62,7 @@ enum MlDsa87PrivateKeyValue<'a> {
     Both(MlDsa87PrivateKeyBoth<'a>),
 }
 
-#[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+#[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
 #[derive(asn1::Asn1Read, asn1::Asn1Write)]
 struct MlDsa87PrivateKeyBoth<'a> {
     seed: &'a [u8],
@@ -164,7 +164,7 @@ pub fn parse_private_key(
                 openssl::pkey::Id::ED448,
             )?)
         }
-        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
         AlgorithmParameters::Mldsa44 => {
             // RFC 9881 Section 6 defines three CHOICE formats for ML-DSA private keys:
             // 1. seed [0] IMPLICIT OCTET STRING (SIZE (32)) - recommended
@@ -205,7 +205,7 @@ pub fn parse_private_key(
                 seed_bytes,
             )?)
         }
-        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
         AlgorithmParameters::Mldsa65 => {
             // RFC 9881 Section 6 defines three CHOICE formats for ML-DSA private keys:
             // 1. seed [0] IMPLICIT OCTET STRING (SIZE (32)) - recommended
@@ -246,7 +246,7 @@ pub fn parse_private_key(
                 seed_bytes,
             )?)
         }
-        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
         AlgorithmParameters::Mldsa87 => {
             // RFC 9881 Section 6 defines three CHOICE formats for ML-DSA private keys:
             // 1. seed [0] IMPLICIT OCTET STRING (SIZE (32)) - recommended
@@ -623,7 +623,7 @@ pub fn serialize_private_key(
         _ => {
             // If pkey type is implemented in a provider in OpenSSL, EVP_KEY_id() will return -1
             // meaning that the type is not really registered. Use different method to detect ML-DSA
-            #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+            #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
             {
                 if let Some(ml_dsa_params) = pkey.ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa44)? {
                     // RFC 9881 Section 6: Use seed-only format (recommended for storage efficiency)
@@ -654,7 +654,7 @@ pub fn serialize_private_key(
                     unimplemented!("Unknown key type");
                 }
             }
-            #[cfg(not(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER))]
+            #[cfg(not(CRYPTOGRAPHY_MLDSA_SUPPORT))]
             unimplemented!("Unknown key type");
         }
     };

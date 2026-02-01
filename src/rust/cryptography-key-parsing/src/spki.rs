@@ -100,19 +100,19 @@ pub fn parse_public_key(
 
             Ok(openssl::pkey::PKey::from_dh(dh)?)
         }
-        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
         AlgorithmParameters::Mldsa44 => Ok(openssl::pkey::PKey::public_key_from_raw_bytes_ex(
             k.subject_public_key.as_bytes(),
             "ML-DSA-44",
         )
         .map_err(|_| KeyParsingError::InvalidKey)?),
-        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
         AlgorithmParameters::Mldsa65 => Ok(openssl::pkey::PKey::public_key_from_raw_bytes_ex(
             k.subject_public_key.as_bytes(),
             "ML-DSA-65",
         )
         .map_err(|_| KeyParsingError::InvalidKey)?),
-        #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+        #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
         AlgorithmParameters::Mldsa87 => Ok(openssl::pkey::PKey::public_key_from_raw_bytes_ex(
             k.subject_public_key.as_bytes(),
             "ML-DSA-87",
@@ -235,7 +235,7 @@ pub fn serialize_public_key(
         _ => {
             // If pkey type is implemented in a provider in OpenSSL, EVP_KEY_id() will return -1
             // meaning that the type is not really registered. Use different method to detect ML-DSA
-            #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+            #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
             {
                 if pkey
                     .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa44)
@@ -262,7 +262,7 @@ pub fn serialize_public_key(
                     unimplemented!("Unknown key type");
                 }
             }
-            #[cfg(not(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER))]
+            #[cfg(not(CRYPTOGRAPHY_MLDSA_SUPPORT))]
             unimplemented!("Unknown key type");
         }
     };

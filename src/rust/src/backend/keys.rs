@@ -118,7 +118,7 @@ fn private_key_from_pkey<'p>(
     unsafe_skip_rsa_key_validation: bool,
 ) -> CryptographyResult<pyo3::Bound<'p, pyo3::PyAny>> {
     // Check for ML-DSA keys using the ml_dsa() method
-    #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+    #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
     {
         if pkey
             .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa44)?
@@ -274,7 +274,7 @@ fn public_key_from_pkey<'p>(
     id: openssl::pkey::Id,
 ) -> CryptographyResult<pyo3::Bound<'p, pyo3::PyAny>> {
     // Check for ML-DSA keys using the ml_dsa() method
-    #[cfg(CRYPTOGRAPHY_OPENSSL_350_OR_GREATER)]
+    #[cfg(CRYPTOGRAPHY_MLDSA_SUPPORT)]
     {
         if pkey
             .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa44)?
