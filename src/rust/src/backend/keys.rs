@@ -136,6 +136,14 @@ fn private_key_from_pkey<'p>(
                 .into_pyobject(py)?
                 .into_any());
         }
+        if pkey
+            .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa87)?
+            .is_some()
+        {
+            return Ok(crate::backend::mldsa87::private_key_from_pkey(pkey)
+                .into_pyobject(py)?
+                .into_any());
+        }
     }
     match pkey.id() {
         openssl::pkey::Id::RSA => Ok(crate::backend::rsa::private_key_from_pkey(
@@ -281,6 +289,14 @@ fn public_key_from_pkey<'p>(
             .is_some()
         {
             return Ok(crate::backend::mldsa65::public_key_from_pkey(pkey)
+                .into_pyobject(py)?
+                .into_any());
+        }
+        if pkey
+            .ml_dsa(openssl::pkey_ml_dsa::Variant::MlDsa87)?
+            .is_some()
+        {
+            return Ok(crate::backend::mldsa87::public_key_from_pkey(pkey)
                 .into_pyobject(py)?
                 .into_any());
         }

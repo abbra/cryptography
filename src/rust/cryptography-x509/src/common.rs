@@ -188,6 +188,9 @@ pub enum AlgorithmParameters<'a> {
     #[defined_by(oid::ML_DSA_65)]
     Mldsa65,
 
+    #[defined_by(oid::ML_DSA_87)]
+    Mldsa87,
+
     #[default]
     Other(asn1::ObjectIdentifier, Option<asn1::Tlv<'a>>),
 }
