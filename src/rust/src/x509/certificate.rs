@@ -44,6 +44,7 @@ pub(crate) struct Certificate {
     pub(crate) cached_issuer: pyo3::sync::PyOnceLock<pyo3::Py<pyo3::PyAny>>,
     pub(crate) cached_subject: pyo3::sync::PyOnceLock<pyo3::Py<pyo3::PyAny>>,
     pub(crate) cached_public_key: pyo3::sync::PyOnceLock<pyo3::Py<pyo3::PyAny>>,
+    pub(crate) cached_signature_algorithm_oid: pyo3::sync::PyOnceLock<pyo3::Py<pyo3::PyAny>>,
 }
 
 #[pyo3::pymethods]
@@ -309,7 +310,14 @@ impl Certificate {
         &self,
         py: pyo3::Python<'p>,
     ) -> pyo3::PyResult<pyo3::Bound<'p, pyo3::PyAny>> {
-        oid_to_py_oid(py, self.raw.borrow_dependent().signature_alg.oid())
+        Ok(self
+            .cached_signature_algorithm_oid
+            .get_or_try_init(py, || {
+                oid_to_py_oid(py, self.raw.borrow_dependent().signature_alg.oid())
+                    .map(|v| v.unbind())
+            })?
+            .bind(py)
+            .clone())
     }
 
     #[getter]
@@ -468,6 +476,7 @@ pub(crate) fn load_der_x509_certificate(
         cached_issuer: pyo3::sync::PyOnceLock::new(),
         cached_subject: pyo3::sync::PyOnceLock::new(),
         cached_public_key: pyo3::sync::PyOnceLock::new(),
+        cached_signature_algorithm_oid: pyo3::sync::PyOnceLock::new(),
     })
 }
 
